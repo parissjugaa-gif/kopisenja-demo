@@ -4,30 +4,29 @@ import { useReveal } from '@/hooks/useReveal';
 function GalleryItem({
   image,
   index,
+  featured = false,
 }: {
   image: GalleryImage;
   index: number;
+  featured?: boolean;
 }) {
   const { ref, isVisible } = useReveal<HTMLDivElement>();
-
-  const spanClass =
-    image.span === 'tall'
-      ? 'sm:row-span-2'
-      : image.span === 'wide'
-        ? 'sm:col-span-2'
-        : '';
 
   return (
     <div
       ref={ref}
-      className={`reveal ${isVisible ? 'is-visible' : ''} group relative overflow-hidden rounded-2xl ${spanClass}`}
+      className={`reveal ${isVisible ? 'is-visible' : ''} group relative overflow-hidden rounded-2xl ${
+        featured
+          ? 'col-span-2 row-span-2 sm:col-span-2 sm:row-span-2'
+          : 'col-span-1 row-span-1'
+      }`}
       style={{ transitionDelay: `${index * 80}ms` }}
     >
       <img
         src={image.src}
         alt={image.alt}
         loading="lazy"
-        className="w-full h-full min-h-[200px] object-cover transition-transform duration-700 group-hover:scale-110"
+        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
       <div className="absolute inset-0 bg-coffee-900/0 group-hover:bg-coffee-900/30 transition-colors duration-500" />
       <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -47,7 +46,7 @@ export default function Gallery() {
       <div className="container-px mx-auto max-w-7xl">
         <div
           ref={ref}
-          className={`reveal ${isVisible ? 'is-visible' : ''} text-center max-w-2xl mx-auto mb-12 md:mb-16`}
+          className={`reveal ${isVisible ? 'is-visible' : ''} text-center max-w-2xl mx-auto mb-10 md:mb-14`}
         >
           <span className="text-sm font-semibold tracking-widest text-amber-600 uppercase mb-3 block">
             Galeri
@@ -60,9 +59,15 @@ export default function Gallery() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 auto-rows-[160px] sm:auto-rows-[200px] lg:auto-rows-[220px]">
+        {/* Mobile: 2-col equal grid / Tablet & Desktop: 3-col editorial with featured */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 auto-rows-[140px] sm:auto-rows-[180px] lg:auto-rows-[220px] gap-3 sm:gap-4">
           {galleryImages.map((image, i) => (
-            <GalleryItem key={i} image={image} index={i} />
+            <GalleryItem
+              key={i}
+              image={image}
+              index={i}
+              featured={i === 0}
+            />
           ))}
         </div>
       </div>
